@@ -104,8 +104,22 @@ model = model5_10(K, clade, house)
 m5_10 = sample(model, NUTS(), 2000)
 
 post = DataFrame(m5_10)
+
+function recover_levels(var::String, factor::CategoricalArray)
+    flevels = levels(factor)
+    nlevels = length(flevels)
+    params = [var * "["] .* map(string, 1:nlevels) .* "]"
+    dict = Dict(zip(params, flevels))
+    return dict
+end
+
+
 clades = recover_levels("α", df.clade)
 rename!(post, clades)
+
+houses = categorical(["Gryffindor", "Ravenclaw", "Hufflepuff", "Slytherin"])
+houses = recover_levels("h", houses)
+rename!(post, houses)
 
 post_long = DataFrames.stack(post)
 
