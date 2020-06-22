@@ -23,6 +23,7 @@ end
 
 # ### snippet 5.3
 
+# TODO: use population standard deviation to be consistent with Rethinking?
 scale(x) = (x .- mean(x)) ./ std(x)
 
 df = CSV.read(joinpath(@__DIR__, "data", "milk.csv"))
@@ -46,8 +47,8 @@ end
 model = model5_9(K, clade)
 
 m5_9 = sample(model, NUTS(), 2000)
-# prob"K = K | chain = m5_9, model = model5_9"
-​
+loglik = logprob"K = K | chain = m5_9, clade = clade, model = model5_9"
+
 describe(m5_9)
 plot(m5_9)
 
@@ -102,6 +103,7 @@ K, clade, house = df.K, df.clade_id, df.house
 model = model5_10(K, clade, house)
 
 m5_10 = sample(model, NUTS(), 2000)
+
 
 post = DataFrame(m5_10)
 
